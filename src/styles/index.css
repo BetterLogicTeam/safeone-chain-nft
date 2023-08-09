@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.text-yellow {
+    background: linear-gradient(45deg, #F97316, #EAB308);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.text-blue {
+    background: linear-gradient(90deg ,#3B82F6, #14B8A6);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.container-yellow {
+    background: linear-gradient(90deg, #F97316 2.84%, #EAB308 99.18%);
+}
+
+.container-blue {
+    background: linear-gradient(90deg, #3B82F6 0%, #14B8A6 100%);
+}
+
+.modal-background {
+    background: #1CC5FA;
+}
+
+.minus-zIndex {
+    z-index: -1 !important;
+}

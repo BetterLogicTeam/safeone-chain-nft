@@ -1,0 +1,12 @@
+.Upload_img{
+    display: flex;
+    justify-content: start;
+
+    margin-top: 1rem;
+}
+.css-1hbvpl3-MuiSvgIcon-root {
+color: white !important;
+}
+.css-vqmohf-MuiButtonBase-root-MuiRadio-root.Mui-checked {
+    color: #fff !important;
+}
