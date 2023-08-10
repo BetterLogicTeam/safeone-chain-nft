@@ -13,7 +13,7 @@ const styles = {
   },
 }
 
-const PlatformStakeDetails = () => {
+const PlatformStakeDetails = ({poolData}) => {
   return (
     <>
       <div className={`${styles.gridContainer}`}>
@@ -47,7 +47,7 @@ const PlatformStakeDetails = () => {
         <div className={`bg-[#111111] p-4 rounded-md grid grid-cols-20 gap-y-4 lg:gap-y-0`}>
           <div className={`col-span-full md:col-span-12 lg:col-span-3 ${styles.divContainer}`}>
             <span className={`${styles.detailsContainer.title}`}>Duration</span>
-            <span className={`${styles.detailsContainer.value2} text-yellow`}>90 Days</span>
+            <span className={`${styles.detailsContainer.value2} text-yellow`}>{poolData?.lockableDays} Days</span>
           </div>
 
           <div className={`col-span-full md:col-span-8 lg:col-span-3 ${styles.divContainer}`}>
@@ -57,7 +57,7 @@ const PlatformStakeDetails = () => {
 
           <div className={`col-span-full md:col-span-12 lg:col-span-9 xl:col-span-7 ${styles.divContainer}`}>
             <span className={`${styles.detailsContainer.title}`}>contract</span>
-            <div className={`${styles.detailsContainer.value2} flex items-center`}>0x43445754642fws3gf454y23dfu57<span className='cursor-pointer ml-2 xl:ml-3'><IoIosCopy /></span></div>
+            <div className={`${styles.detailsContainer.value2} flex items-center`}>{poolData?.StakedtokenAddress}<span className='cursor-pointer ml-2 xl:ml-3'><IoIosCopy /></span></div>
           </div>
 
           <div className={`col-span-full md:col-span-8 lg:col-span-3 ${styles.divContainer}`}>

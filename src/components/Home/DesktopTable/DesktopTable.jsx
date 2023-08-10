@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useNavigation } from "react-router-dom";
 
 import homeTableData from "../../../assets/data/homeTable";
 
@@ -10,6 +10,8 @@ const styles = {
 const { tableLayout } = styles;
 
 const DesktopTable = ({ poll_Array }) => {
+
+  let history=useNavigate()
   return (
     <>
       <div className={`${tableLayout} p-2 rounded-t-md`}>
@@ -37,12 +39,13 @@ const DesktopTable = ({ poll_Array }) => {
           <div className="col-span-2 flex items-center">15</div>
           <div className="col-span-2 flex items-center">$6</div>
           <div className="col-span-2 flex items-center">
-            <Link
+            <div
               className="px-4 lg:px-6 py-0.5 home-table-view cursor-pointer"
-              to="/stake/1" // TODO: change to dynamic link
+              // to="/stake/1" // TODO: change to dynamic link
+              onClick={()=>history(`/stake/${index+1}`,{state:data})}
             >
-              <span className="text-xs">View</span>
-            </Link>
+              <span className="text-xs" >View</span>
+            </div>
             {/* {data.view && (
                             <Link className="px-4 lg:px-6 py-0.5 home-table-view cursor-pointer"
                                 to="/stake/1" // TODO: change to dynamic link

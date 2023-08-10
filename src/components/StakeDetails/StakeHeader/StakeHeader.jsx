@@ -1,10 +1,10 @@
 import logo from "../../../assets/images/global/logo.svg";
 
-const Header = () => {
+const Header = ({poolData}) => {
   return (
     <div className="flex justify-between md:justify-start items-center">
       <div className="flex items-center">
-        <img src={logo} alt="logo" className="w-20 h-20 md:w-28 md:h-28" />
+        <img src={poolData?.poolLogo} alt="logo" className="w-20 h-20 md:w-28 md:h-28" />
 
         <div className="ml-2 md:ml-4">
           <h1 className="font-medium text-xl md:text-3xl">SAFO</h1>

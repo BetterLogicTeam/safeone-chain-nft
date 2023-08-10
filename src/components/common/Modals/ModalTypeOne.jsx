@@ -53,6 +53,11 @@ const ModalTypeOne = ({ closeModal, nftSeriesModal }) => {
                 
                 <div className="container-blue py-2 cursor-pointer w-[15rem] text-center mt-4">
                     {nftSeriesModal.button}
+                     
+                </div>
+                <div className="container-blue py-2 cursor-pointer w-[15rem] text-center mt-4">
+                    {nftSeriesModal.decrement_button}
+                    
                 </div>
             </div>
 
