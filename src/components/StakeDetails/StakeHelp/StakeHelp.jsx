@@ -30,7 +30,7 @@ const StakeHelp = ({poolData,id}) => {
   });
   const [nftUnstake, setNftUnstake] = useState(false);
   const [helpModal, setHelpModal] = useState(false);
-  let [num, setNum] = useState(1);
+  let [num, setNum] = useState(0);
   const [User_NFT, setUser_NFT] = useState(0)
   const [token_Bal, settoken_Bal] = useState(0)
   let { provider, acc, providerType, web3 } = useSelector(

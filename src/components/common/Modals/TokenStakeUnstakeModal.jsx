@@ -7,7 +7,13 @@ import logo from "../../../assets/images/global/logo.svg";
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import Web3 from "web3";
-import { SEFO_NFT_Abi, SEFO_Token_Abi, SEFO_staking_Abi, SEFO_staking_Address } from "../../../utils/Contract";
+import {
+  SEFO_NFT_Abi,
+  SEFO_Token_Abi,
+  SEFO_Token_Address,
+  SEFO_staking_Abi,
+  SEFO_staking_Address,
+} from "../../../utils/Contract";
 
 const TokenStakeUnstakeModal = ({
   modalTypeStakeController,
@@ -16,7 +22,7 @@ const TokenStakeUnstakeModal = ({
   id,
   User_NFT,
   num,
-  poolData
+  poolData,
 }) => {
   const modalRef = useRef(null);
   let { provider, acc, providerType, web3 } = useSelector(
@@ -24,6 +30,7 @@ const TokenStakeUnstakeModal = ({
   );
   const [get_Percentage, setget_Percentage] = useState(0);
   const [get_user_value, setget_user_value] = useState(0);
+  const [spinner, setspinner] = useState(false);
 
   useEffect(() => {
     if (modalTypeStakeController.status) {
@@ -51,7 +58,7 @@ const TokenStakeUnstakeModal = ({
     try {
       if (get_Percentage == 25) {
         let token_value = (token_Bal * 25) / 100;
-        console.log("token_value",token_value);
+        console.log("token_value", token_value);
         setget_user_value(token_value);
       } else if (get_Percentage == 50) {
         let token_value = (token_Bal * 50) / 100;
@@ -68,56 +75,75 @@ const TokenStakeUnstakeModal = ({
     }
   };
 
-
   const Token_Stake = async () => {
     try {
       if (acc) {
+        console.log("User_NFT", User_NFT[num]);
         if (Number(get_user_value) < Number(token_Bal)) {
           if (User_NFT.length != 0) {
-            let nftContractOf = new webSupply.eth.Contract(
+            if(get_user_value==0){
+              toast.error("Please Enter token Amount !")
+              setspinner(false);
+
+            }else{
+              setspinner(true);
+              let tokenContractOf = new web3.eth.Contract(
+                SEFO_Token_Abi,
+                SEFO_Token_Address
+              );
+              let nftContractOf = new web3.eth.Contract(
                 SEFO_NFT_Abi,
                 poolData?.StakednftAddress
               );
-              let tokenContractOf = new webSupply.eth.Contract(
-                SEFO_Token_Abi,
-                poolData?.StakedtokenAddress
-              );
-              let ContractOf = new webSupply.eth.Contract(
+              let ContractOf = new web3.eth.Contract(
                 SEFO_staking_Abi,
                 SEFO_staking_Address
               );
-
-              let Token_values=webSupply.utils.toWei(get_user_value.toString())
-              console.log("User_NFT[num]",poolData?.StakednftAddress);
-
-              await tokenContractOf.methods.approve(SEFO_staking_Address,Token_values).send({
-                from:acc
-              })
-
-              toast.success("Approve SuccessFully!")
-
-              await nftContractOf.methods.setApprovalForAll(SEFO_staking_Address,true).send({
-                from:acc
-              })
-              toast.success("NFT Approve SuccessFully!")
-
-              await ContractOf.methods.staketoken(Token_values,User_NFT[num],id).send({
-                from:acc
-              })
-
-              toast.success("Transaction SuccessFully ")
-
-
+  
+              // console.log("User_NFT[num]",tokenContractOf);
+              let Token_values = webSupply.utils.toWei(parseInt(get_user_value).toString());
+  
+              await tokenContractOf.methods
+                .approve(SEFO_staking_Address, Token_values)
+                .send({
+                  from: acc,
+                });
+  
+              toast.success("Approve SuccessFully!");
+  
+              await nftContractOf.methods
+                .setApprovalForAll(SEFO_staking_Address, true)
+                .send({
+                  from: acc,
+                });
+              toast.success("NFT Approve SuccessFully!");
+  
+              await ContractOf.methods
+                .staketoken(Token_values, [User_NFT[num]], id)
+                .send({
+                  from: acc,
+                });
+  
+              toast.success("Transaction SuccessFully ");
+  
+              setspinner(false);
+            }
+           
           } else {
             toast.error("No NFT Found!");
+            setspinner(false);
           }
         } else {
           toast.error("Insufficient Token");
+          setspinner(false);
         }
       } else {
         toast.error("Please Connect Wallet First!");
+        setspinner(false);
       }
     } catch (error) {
+      setspinner(false);
+
       console.log(error);
     }
   };
@@ -185,8 +211,19 @@ const TokenStakeUnstakeModal = ({
                 onChange={(e) => setget_user_value(e.target.value)}
               />
 
-              <div className="container-yellow py-2 cursor-pointer w-[15rem] text-center mt-4" onClick={()=>Token_Stake()}>
-                {modalTypeStakeController.button}
+              <div
+                className="container-yellow py-2 cursor-pointer w-[15rem] text-center mt-4"
+                onClick={() => Token_Stake()}
+              >
+                {spinner ? (
+                  <>
+                    <div class="spinner-border" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                  </>
+                ) : (
+                  <>{modalTypeStakeController.button}</>
+                )}
               </div>
             </div>
           </div>
