@@ -14,6 +14,12 @@ import {
   SEFO_staking_Abi,
   SEFO_staking_Address,
 } from "../../../utils/Contract";
+import {
+  prepareWriteContract,
+  waitForTransaction,
+  writeContract,
+} from "@wagmi/core";
+import { useAccount } from "wagmi";
 
 const TokenStakeUnstakeModal = ({
   modalTypeStakeController,
@@ -25,12 +31,11 @@ const TokenStakeUnstakeModal = ({
   poolData,
 }) => {
   const modalRef = useRef(null);
-  let { provider, acc, providerType, web3 } = useSelector(
-    (state) => state.connectWallet
-  );
+
   const [get_Percentage, setget_Percentage] = useState(0);
   const [get_user_value, setget_user_value] = useState(0);
   const [spinner, setspinner] = useState(false);
+  const { address } = useAccount();
 
   useEffect(() => {
     if (modalTypeStakeController.status) {
@@ -77,58 +82,63 @@ const TokenStakeUnstakeModal = ({
 
   const Token_Stake = async () => {
     try {
-      if (acc) {
-        console.log("User_NFT", User_NFT[num]);
+      if (address) {
         if (Number(get_user_value) < Number(token_Bal)) {
           if (User_NFT.length != 0) {
-            if(get_user_value==0){
-              toast.error("Please Enter token Amount !")
+            if (get_user_value == 0) {
+              toast.error("Please Enter token Amount !");
               setspinner(false);
-
-            }else{
+            } else {
               setspinner(true);
-              let tokenContractOf = new web3.eth.Contract(
-                SEFO_Token_Abi,
-                SEFO_Token_Address
+              console.log("User_NFT[0]", User_NFT[0]);
+              let Token_values = webSupply.utils.toWei(
+                parseInt(get_user_value).toString()
               );
-              let nftContractOf = new web3.eth.Contract(
-                SEFO_NFT_Abi,
-                poolData?.StakednftAddress
-              );
-              let ContractOf = new web3.eth.Contract(
-                SEFO_staking_Abi,
-                SEFO_staking_Address
-              );
-  
-              // console.log("User_NFT[num]",tokenContractOf);
-              let Token_values = webSupply.utils.toWei(parseInt(get_user_value).toString());
-  
-              await tokenContractOf.methods
-                .approve(SEFO_staking_Address, Token_values)
-                .send({
-                  from: acc,
-                });
-  
+              const approve = await prepareWriteContract({
+                address: SEFO_Token_Address,
+                abi: SEFO_Token_Abi,
+                functionName: "approve",
+                args: [SEFO_staking_Address, Token_values],
+                account: address,
+              });
+              const approvehash = await writeContract(approve.request);
+              await waitForTransaction({
+                hash: approvehash.hash,
+              });
               toast.success("Approve SuccessFully!");
-  
-              await nftContractOf.methods
-                .setApprovalForAll(SEFO_staking_Address, true)
-                .send({
-                  from: acc,
-                });
+
+              const setApprovalForAll = await prepareWriteContract({
+                address: poolData?.StakednftAddress,
+                abi: SEFO_NFT_Abi,
+                functionName: "setApprovalForAll",
+                args: [SEFO_staking_Address, true],
+                account: address,
+              });
+
+              const setApprovalForAllhash = await writeContract(
+                setApprovalForAll.request
+              );
+              await waitForTransaction({
+                hash: setApprovalForAllhash.hash,
+              });
               toast.success("NFT Approve SuccessFully!");
-  
-              await ContractOf.methods
-                .staketoken(Token_values, [User_NFT[num]], id)
-                .send({
-                  from: acc,
-                });
-  
+
+              const staketoken = await prepareWriteContract({
+                address: SEFO_staking_Address,
+                abi: SEFO_staking_Abi,
+                functionName: "staketoken",
+                args: [Token_values, [User_NFT[0]], id],
+                account: address,
+              });
+
+              const staketokenhash = await writeContract(staketoken.request);
+              await waitForTransaction({
+                hash: staketokenhash.hash,
+              });
               toast.success("Transaction SuccessFully ");
-  
+
               setspinner(false);
             }
-           
           } else {
             toast.error("No NFT Found!");
             setspinner(false);

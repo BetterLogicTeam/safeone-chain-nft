@@ -10,11 +10,8 @@ import Web3 from "web3";
 
 const Home = () => {
   const [poll_Array, setpoll_Array] = useState([]);
-  const webSupply = new Web3("https://bsc-testnet.public.blastapi.io");
+  const webSupply = new Web3("https://endpoints.omniatech.io/v1/eth/sepolia/public");
 
-  let { provider, acc, providerType, web3 } = useSelector(
-    (state) => state.connectWallet
-  );
 
   const pools = async () => {
     try {
@@ -58,11 +55,11 @@ const Home = () => {
   return (
     <main>
       <section className="hidden lg:block p-16 lg:p-24 max-w-7xl mx-auto">
-        <DesktopTable  poll_Array={poll_Array}/>
+        <DesktopTable  poll_Array={poll_Array} admin={false} />
       </section>
 
       <section className="lg:hidden py-4 max-w-xl mx-auto">
-        <MobileTable />
+        <MobileTable poll_Array={poll_Array}  admin={false} />
       </section>
     </main>
   );

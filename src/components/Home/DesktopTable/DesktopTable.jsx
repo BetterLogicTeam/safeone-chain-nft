@@ -9,7 +9,7 @@ const styles = {
 
 const { tableLayout } = styles;
 
-const DesktopTable = ({ poll_Array }) => {
+const DesktopTable = ({ poll_Array, admin }) => {
 
   let history=useNavigate()
   return (
@@ -41,18 +41,14 @@ const DesktopTable = ({ poll_Array }) => {
           <div className="col-span-2 flex items-center">
             <div
               className="px-4 lg:px-6 py-0.5 home-table-view cursor-pointer"
-              // to="/stake/1" // TODO: change to dynamic link
-              onClick={()=>history(`/stake/${index+1}`,{state:data})}
+              
+              onClick={()=>(admin ? history(`/Admin_Panel/?EditPool&&Pool_ID=${index+1}`,{state:data}):  history(`/stake/${index+1}`,{state:data}))}
             >
-              <span className="text-xs" >View</span>
+              <span className="text-xs"> {
+                admin ? "Edit":"View"
+              } </span>
             </div>
-            {/* {data.view && (
-                            <Link className="px-4 lg:px-6 py-0.5 home-table-view cursor-pointer"
-                                to="/stake/1" // TODO: change to dynamic link
-                            >
-                                <span className="text-xs">View</span>
-                            </Link>
-                        )} */}
+            
           </div>
         </div>
       ))}

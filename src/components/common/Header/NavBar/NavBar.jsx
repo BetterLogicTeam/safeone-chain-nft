@@ -10,6 +10,8 @@ import logo from "../../../../assets/images/global/logo.svg";
 import { useLayoutContext } from "../../../../LayoutContext";
 import { useDispatch, useSelector } from "react-redux";
 import { disconnectWallet } from "../../../../store/actions/logout";
+import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+import { useWeb3Modal } from "@web3modal/react";
 
 
 const styles = {
@@ -20,6 +22,10 @@ const styles = {
 const NavBar = () => {
   const { setMobileOpen } = useLayoutContext();
   const [openWalletModal, setOpenWalletModal] = useState(false);
+  const { chain } = useNetwork();
+  const { chains, switchNetwork } = useSwitchNetwork();
+  const { address } = useAccount();
+  const { open } = useWeb3Modal();
   let { provider, acc, providerType, web3 } = useSelector(
     (state) => state.connectWallet
   );
@@ -68,16 +74,41 @@ const NavBar = () => {
 
             <div>
               <button type="button" className={`${styles.button} bg-white`}
-                onClick={()=>(acc ? diconnectWallet():handleModalOpen())}
+                onClick={() =>
+                  address
+                    ? chain?.id == chains[0]?.id
+                      ? open()
+                      : switchNetwork?.(chains[0]?.id)
+                    : open()
+                }
+                // onClick={()=>(acc ? diconnectWallet():handleModalOpen())}
                 // onClick={() => open()}
               >
-                {
+                {/* {
                   acc ? <>{`${acc.substring(0, 6)}...${acc.substring(acc.length - 4)}`}</> : <><FaWallet className="mr-2" />
                   <span>Connect</span>
                   </>
-                }
+                } */}
               {/* <FaWallet className="mr-2" />
                   <span>Connect</span> */}
+
+{address ? (
+                    chain?.id == chains[0]?.id || chain?.id == chains[1]?.id ? (
+                      address ? (
+                        <>
+                          {`${address.substring(0, 6)}...${address.substring(
+                            address.length - 4
+                          )}`}
+                        </>
+                      ) : (
+                        "connect wallet"
+                      )
+                    ) : (
+                      "Switch NewWork"
+                    )
+                  ) : (
+                    "Connect Wallet"
+                  )}
                   
                 
               </button>

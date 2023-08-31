@@ -19,10 +19,10 @@ const headerData = [
         title: "SAFO Dapp",
         link: "https://finance.safeonechain.com/farms",
     },
-    {
-        title: "Admin Panel",
-        link: "/Admin_Panel",
-    }
+    // {
+    //     title: "Admin Panel",
+    //     link: "/Admin_Panel",
+    // }
 ];
 
 export default headerData;

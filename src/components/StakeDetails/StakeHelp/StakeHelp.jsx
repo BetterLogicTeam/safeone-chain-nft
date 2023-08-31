@@ -7,14 +7,21 @@ import HelpModal from "../../common/Modals/HelpModal";
 import NFTStakingModal from "../../common/Modals/NFTStakingModal";
 import Web3 from "web3";
 import {
-    SEFO_NFT_Abi,
+  SEFO_NFT_Abi,
   SEFO_Token_Abi,
   SEFO_staking_Abi,
   SEFO_staking_Address,
 } from "../../../utils/Contract";
 import { useSelector } from "react-redux";
+import {
+  prepareWriteContract,
+  waitForTransaction,
+  writeContract,
+} from "@wagmi/core";
+import { useAccount } from "wagmi";
+import { toast } from "react-hot-toast";
 
-const StakeHelp = ({poolData,id}) => {
+const StakeHelp = ({ poolData, id }) => {
   const [modalTypeOneController, setModalTypeOneController] = useState({
     status: false,
     heading: "",
@@ -31,16 +38,17 @@ const StakeHelp = ({poolData,id}) => {
   const [nftUnstake, setNftUnstake] = useState(false);
   const [helpModal, setHelpModal] = useState(false);
   let [num, setNum] = useState(0);
-  const [User_NFT, setUser_NFT] = useState(0)
-  const [token_Bal, settoken_Bal] = useState(0)
-  let { provider, acc, providerType, web3 } = useSelector(
-    (state) => state.connectWallet
+  const [User_NFT, setUser_NFT] = useState(0);
+  const [token_Bal, settoken_Bal] = useState(0);
+  const { address } = useAccount();
+  const [spinner, setSpinner] = useState(false);
+
+  const webSupply = new Web3(
+    "https://endpoints.omniatech.io/v1/eth/sepolia/public"
   );
-  const webSupply = new Web3("https://bsc-testnet.public.blastapi.io");
 
   const get_user_NFTs = async () => {
     try {
-       
       let nftContractOf = new webSupply.eth.Contract(
         SEFO_NFT_Abi,
         poolData?.StakednftAddress
@@ -49,13 +57,16 @@ const StakeHelp = ({poolData,id}) => {
         SEFO_Token_Abi,
         poolData?.StakedtokenAddress
       );
-      let walletOfOwner = await nftContractOf.methods.walletOfOwner(acc).call();
-      setUser_NFT(walletOfOwner)
-      
-      let Token_Balance = await tokenContractOf.methods.balanceOf(acc).call();
-      console.log("Token_Balance",Token_Balance);
-      settoken_Bal(webSupply.utils.fromWei(Token_Balance.toString()))
+      let walletOfOwner = await nftContractOf.methods
+        .walletOfOwner(address)
+        .call();
+      setUser_NFT(walletOfOwner);
 
+      let Token_Balance = await tokenContractOf.methods
+        .balanceOf(address)
+        .call();
+      console.log("Token_Balance", Token_Balance);
+      settoken_Bal(webSupply.utils.fromWei(Token_Balance.toString()));
     } catch (error) {
       console.log(error);
     }
@@ -75,10 +86,9 @@ const StakeHelp = ({poolData,id}) => {
     setNum(e.target.value);
   };
 
-  useEffect(()=>{
-    get_user_NFTs()
-  },[num])
-
+  useEffect(() => {
+    get_user_NFTs();
+  }, [num]);
 
   const [staking_model, setstaking_model] = useState({
     status: false,
@@ -120,6 +130,28 @@ const StakeHelp = ({poolData,id}) => {
         break;
       default:
         break;
+    }
+  };
+
+  const harvest = async () => {
+    try {
+      setSpinner(true);
+      const harvest = await prepareWriteContract({
+        address: SEFO_staking_Address,
+        abi: SEFO_staking_Abi,
+        functionName: "harvest",
+        args: [id],
+        account: address,
+      });
+      const harvesthash = await writeContract(harvest.request);
+      await waitForTransaction({
+        hash: harvesthash.hash,
+      });
+      toast.success("Transaction SuccessFully!");
+      setSpinner(false);
+    } catch (error) {
+      console.log(error);
+      setSpinner(false);
     }
   };
 
@@ -258,9 +290,9 @@ const StakeHelp = ({poolData,id}) => {
         </div>
       </div>
 
-      <div className="my-8 flex justify-center items-center">
+      <div className="my-8 flex justify-center items-center" onClick={harvest}>
         <div className="container-yellow py-2 px-10 uppercase text-black text-sm cursor-pointer">
-          Harvest
+          {spinner ? "Loading..." : "Harvest"}
         </div>
       </div>
     </>

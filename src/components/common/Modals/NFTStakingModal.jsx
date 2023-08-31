@@ -14,7 +14,7 @@ export default function NFTStakingModal({
 }) {
   const modalRef = useRef(null);
 
-  console.log("modalRef", nftSeriesModal.type);
+  // console.log("modalRef", nftSeriesModal.type);
 
   useEffect(() => {
     if (nftSeriesModal.status) {
