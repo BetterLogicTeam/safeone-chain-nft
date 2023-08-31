@@ -13,7 +13,6 @@ import { disconnectWallet } from "../../../../store/actions/logout";
 import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 import { useWeb3Modal } from "@web3modal/react";
 
-
 const styles = {
   button:
     "flex items-center bg-transparent py-1 px-2 xs:py-2 xs:px-4 md:py-2 md:px-6 uppercase text-xs font-bold",
@@ -31,13 +30,11 @@ const NavBar = () => {
   );
   const dispatch = useDispatch();
 
-  
   const diconnectWallet = async () => {
     if (providerType == 1) {
       await provider.disconnect();
     }
     dispatch(disconnectWallet());
-
   };
 
   const handleModalOpen = () => {
@@ -47,16 +44,20 @@ const NavBar = () => {
   const handleModalClose = () => {
     setOpenWalletModal(false);
   };
-  
+
   return (
     <>
-
-      <WalletConnection open={openWalletModal} handleModalClose={handleModalClose} />
+      <WalletConnection
+        open={openWalletModal}
+        handleModalClose={handleModalClose}
+      />
 
       <div className="flex justify-between items-center z-10 px-4 py-5 md:p-5 md:py-2">
         <div className="flex items-center">
           <img src={logo} className="w-9 h-9 xs:w-11 xs:h-11 mr-4" />
-          <span className="text-white text-lg font-bold hidden md:block">SAFO</span>
+          <span className="text-white text-lg font-bold hidden md:block">
+            SAFO
+          </span>
         </div>
 
         <div className="flex justify-end items-center">
@@ -67,13 +68,14 @@ const NavBar = () => {
                 className={`${styles.button} border-2 border-[#393941] text-white`}
                 onClick={() => console.log("clicked")}
               >
-                
                 Network
               </button>
             </div>
 
             <div>
-              <button type="button" className={`${styles.button} bg-white`}
+              <button
+                type="button"
+                className={`${styles.button} bg-white`}
                 onClick={() =>
                   address
                     ? chain?.id == chains[0]?.id
@@ -89,41 +91,38 @@ const NavBar = () => {
                   <span>Connect</span>
                   </>
                 } */}
-              {/* <FaWallet className="mr-2" />
+                {/* <FaWallet className="mr-2" />
                   <span>Connect</span> */}
 
-{address ? (
-                    chain?.id == chains[0]?.id || chain?.id == chains[1]?.id ? (
-                      address ? (
-                        <>
-                          {`${address.substring(0, 6)}...${address.substring(
-                            address.length - 4
-                          )}`}
-                        </>
-                      ) : (
-                        "connect wallet"
-                      )
+                {address ? (
+                  chain?.id == chains[0]?.id || chain?.id == chains[1]?.id ? (
+                    address ? (
+                      <>
+                        {`${address.substring(0, 6)}...${address.substring(
+                          address.length - 4
+                        )}`}
+                      </>
                     ) : (
-                      "Switch NewWork"
+                      "connect wallet"
                     )
                   ) : (
-                    "Connect Wallet"
-                  )}
-                  
-                
+                    "Switch NewWork"
+                  )
+                ) : (
+                  "Connect Wallet"
+                )}
               </button>
             </div>
           </div>
-          
+
           <div className="flex md:hidden items-center">
-            <HiMenuAlt3 className="text-white text-2xl ml-4 cursor-pointer" 
+            <HiMenuAlt3
+              className="text-white text-2xl ml-4 cursor-pointer"
               onClick={() => setMobileOpen(true)}
             />
           </div>
         </div>
-
       </div>
-
     </>
   );
 };

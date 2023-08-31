@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { MdCancel } from "react-icons/md";
 
@@ -20,6 +20,7 @@ import {
   writeContract,
 } from "@wagmi/core";
 import { useAccount } from "wagmi";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const TokenStakeUnstakeModal = ({
   modalTypeStakeController,
@@ -31,7 +32,7 @@ const TokenStakeUnstakeModal = ({
   poolData,
 }) => {
   const modalRef = useRef(null);
-
+  let history=useNavigate()
   const [get_Percentage, setget_Percentage] = useState(0);
   const [get_user_value, setget_user_value] = useState(0);
   const [spinner, setspinner] = useState(false);
@@ -80,6 +81,8 @@ const TokenStakeUnstakeModal = ({
     }
   };
 
+  useMemo(() => setUser_Balance(), [get_Percentage]);
+
   const Token_Stake = async () => {
     try {
       if (address) {
@@ -88,9 +91,14 @@ const TokenStakeUnstakeModal = ({
             if (get_user_value == 0) {
               toast.error("Please Enter token Amount !");
               setspinner(false);
-            } else {
+            } else if(Number(get_user_value) > Number(webSupply.utils.fromWei(poolData.minimumDeposit.toString()))) {
               setspinner(true);
-              console.log("User_NFT[0]", User_NFT[0]);
+              let NFt_arry=[]
+              for(let i=0;i<num;i++){
+                NFt_arry=[...NFt_arry,User_NFT[i]]
+              }
+
+              console.log("User_NFT[0]", NFt_arry);
               let Token_values = webSupply.utils.toWei(
                 parseInt(get_user_value).toString()
               );
@@ -127,7 +135,7 @@ const TokenStakeUnstakeModal = ({
                 address: SEFO_staking_Address,
                 abi: SEFO_staking_Abi,
                 functionName: "staketoken",
-                args: [Token_values, [User_NFT[0]], id],
+                args: [Token_values, NFt_arry, id],
                 account: address,
               });
 
@@ -136,7 +144,10 @@ const TokenStakeUnstakeModal = ({
                 hash: staketokenhash.hash,
               });
               toast.success("Transaction SuccessFully ");
-
+              setspinner(false);
+              history("/")
+            }else{
+              toast.error(`Please Enter Token greater then ${webSupply.utils.fromWei(poolData.minimumDeposit.toString())} `);
               setspinner(false);
             }
           } else {
@@ -186,28 +197,28 @@ const TokenStakeUnstakeModal = ({
               <div className="w-[18rem] flex justify-between items-center text-center text-sm mt-4">
                 <div
                   className="container-blue py-2 cursor-pointer px-3"
-                  onClick={() => (setget_Percentage(25), setUser_Balance())}
+                  onClick={() => (setget_Percentage(25))}
                 >
                   25%
                 </div>
 
                 <div
                   className="container-blue py-2 cursor-pointer px-3"
-                  onClick={() => (setget_Percentage(50), setUser_Balance())}
+                  onClick={() => (setget_Percentage(50))}
                 >
                   50%
                 </div>
 
                 <div
                   className="container-blue py-2 cursor-pointer px-3"
-                  onClick={() => (setget_Percentage(75), setUser_Balance())}
+                  onClick={() => (setget_Percentage(75))}
                 >
                   75%
                 </div>
 
                 <div
                   className="container-blue py-2 cursor-pointer px-3"
-                  onClick={() => (setget_Percentage(100), setUser_Balance())}
+                  onClick={() => (setget_Percentage(100))}
                 >
                   100%
                 </div>

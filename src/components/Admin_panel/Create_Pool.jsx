@@ -18,6 +18,7 @@ import {
 import { ScaleLoader } from "react-spinners";
 import Swal from "sweetalert2";
 import Web3 from "web3";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const projectId = "2IBOoZHHXKmt5N3fdE1kiHWISeV";
 const projectSecretKey = "c119b93e540651a5580d99ef3b43a756";
@@ -33,6 +34,7 @@ export default function Create_Pool({ Editdata }) {
   });
   const [getUserLogo, setgetUserLogo] = useState(null);
  
+  let history = useNavigate()
   const [LockableDays, setLockableDays] = useState(
     Editdata?.lockableDays || 30
   );
@@ -96,22 +98,11 @@ export default function Create_Pool({ Editdata }) {
           const data = await waitForTransaction({
             hash,
           });
-          // await nftContractOf.methods
-          //   .createPool(
-          //     getUserData.StakednftAddress,
-          //     LockableDays,
-          //     getUserData.StakedtokenAddress,
-          //     path,
-          //     // getUserData.MinimumDeposit,
-          //     web3.utils.toWei(getUserData.MinimumDeposit.toString()),
-          //     selectedValue,
-          //     getUserData.Apy
-          //   )
-          //   .send({
-          //     from: acc,
-          //   });
+       
           Swal.fire("Poll Created", "Successfully", "success");
           setspinner(false);
+          history("/")
+
         } else {
           toast.error("Connect Wallet First!");
           setspinner(false);
@@ -202,8 +193,9 @@ export default function Create_Pool({ Editdata }) {
         //   .send({
         //     from: acc,
         //   });
-        Swal.fire("Poll Created", "Successfully", "success");
+        Swal.fire("Poll Edit", "Successfully", "success");
         setspinner(false);
+        history("/")
       } else {
         toast.error("Connect Wallet First!");
         setspinner(false);
@@ -322,7 +314,7 @@ export default function Create_Pool({ Editdata }) {
               required
               name="MinimumDeposit"
               onChange={handleGet}
-              defaultValue={Editdata?.minimumDeposit}
+              defaultValue={ Editdata !=null?  webSupply.utils.fromWei(Editdata?.minimumDeposit.toString()):"" }
             />
           </div>
 
@@ -478,7 +470,7 @@ export default function Create_Pool({ Editdata }) {
       </div>
       <button
         className="px-4 lg:px-6 py-2 mb-5 home-table-view cursor-pointer"
-        onClick={() => (Editdata?.length !=0 ? EditPoll() : CreatePool())}
+        onClick={() => (Editdata !=null? EditPoll() : CreatePool())}
       >
         {spinner ? (
           <>
@@ -493,9 +485,11 @@ export default function Create_Pool({ Editdata }) {
             />
           </>
         ) : (
-          <>{Editdata?.length != 0 ? "Edit Pool" : "Create Pool"}</>
+          <>{Editdata !=null? "Edit Pool" : "Create Pool"}</>
         )}
+        
       </button>
+   
     </div>
   );
 }

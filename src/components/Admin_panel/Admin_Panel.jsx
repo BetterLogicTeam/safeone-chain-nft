@@ -26,7 +26,7 @@ export default function Admin_Panel() {
     "https://endpoints.omniatech.io/v1/eth/sepolia/public"
   );
   let history = useLocation();
-  let Navigate=useNavigate()
+  let history1 = useNavigate()
 
 
 
@@ -85,7 +85,7 @@ export default function Admin_Panel() {
         <div className="flex justify-end md:justify-end items-end">
           <button
             className="px-4 lg:px-6 py-2 mb-5 home-table-view cursor-pointer "
-            onClick={() => (setPool_create(!pool_create),Navigate('/Admin_Panel'))}
+            onClick={() => (setPool_create(!pool_create),history1('/Admin_Panel'))}
           >
             Create New Pool
           </button>
